@@ -1,0 +1,51 @@
+{% extends 'granjas/base.html' %}
+{% block content %}
+<h3>Consultas con Filtros y Reportes Básicos (RF08)</h3>
+<form method="get" class="card card-body shadow-sm mb-4">
+  <div class="row g-3 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">Filtrar por Lote</label>
+      <select name="lote_id" class="form-select">
+        <option value="">-- Todos los lotes --</option>
+        {% for l in lotes %}
+          <option value="{{ l.id }}" {% if lote_id == l.id|stringformat:"s" %}selected{% endif %}>{{ l.codigo }} - {{ l.granja.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Fecha Inicio</label>
+      <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Fecha Fin</label>
+      <input type="date" name="fecha_fin" value="{{ fecha_fin }}" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-success w-100">Filtrar</button>
+    </div>
+  </div>
+</form>
+
+<div class="row g-3 mb-4 text-center">
+  <div class="col-md-3"><div class="card p-3"><h6>Total Producción</h6><h4 class="text-success">{{ total_prod }}</h4></div></div>
+  <div class="col-md-3"><div class="card p-3"><h6>Total Alimento</h6><h4 class="text-primary">{{ total_alim }} kg</h4></div></div>
+  <div class="col-md-3"><div class="card p-3"><h6>Ingresos Periodo</h6><h4 class="text-success">${{ ingresos }}</h4></div></div>
+  <div class="col-md-3"><div class="card p-3"><h6>Balance Periodo</h6><h4>${{ balance }}</h4></div></div>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-white fw-bold">Detalle de Producción Filtrada</div>
+  <div class="card-body table-responsive">
+    <table class="table table-sm table-striped">
+      <thead><tr><th>Fecha</th><th>Granja</th><th>Lote</th><th>Cantidad</th><th>Observación</th></tr></thead>
+      <tbody>
+        {% for p in prods %}
+        <tr><td>{{ p.fecha }}</td><td>{{ p.lote.granja.nombre }}</td><td>{{ p.lote.codigo }}</td><td>{{ p.cantidad }}</td><td>{{ p.observacion }}</td></tr>
+        {% empty %}
+        <tr><td colspan="5">No hay registros para el filtro seleccionado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'granjas/base.html' %}
+{% block content %}
+<h3>Gestión de Inventarios de Insumos (RF05)</h3>
+<div class="row g-4 mb-4">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-secondary text-white">Crear Insumo</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="crear_insumo">
+          <div class="mb-2"><label class="form-label">Nombre Insumo *</label><input name="nombre" class="form-control" required></div>
+          <div class="row mb-2">
+            <div class="col-6">
+              <label class="form-label">Categoría</label>
+              <select name="categoria" class="form-select">
+                <option value="ALIMENTO">Alimento</option>
+                <option value="MEDICAMENTO">Medicamento</option>
+                <option value="EMPAQUE">Empaque</option>
+                <option value="OTRO">Otro</option>
+              </select>
+            </div>
+            <div class="col-6"><label class="form-label">Unidad</label><input name="unidad" class="form-control" value="kg"></div>
+          </div>
+          <div class="mb-3"><label class="form-label">Existencia Inicial</label><input type="number" step="0.01" name="existencia_inicial" class="form-control" value="0"></div>
+          <button class="btn btn-secondary w-100">Agregar Insumo</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">Registrar Entrada o Salida</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="movimiento">
+          <div class="row mb-2">
+            <div class="col-7">
+              <label class="form-label">Insumo *</label>
+              <select name="insumo_id" class="form-select" required>
+                {% for i in insumos %}<option value="{{ i.id }}">{{ i.nombre }} (Disp: {{ i.existencia_actual }} {{ i.unidad }})</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-5">
+              <label class="form-label">Movimiento *</label>
+              <select name="tipo" class="form-select">
+                <option value="ENTRADA">Entrada (+)</option>
+                <option value="SALIDA">Salida (-)</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-6"><label class="form-label">Fecha *</label><input type="date" name="fecha" class="form-control" required></div>
+            <div class="col-6"><label class="form-label">Cantidad *</label><input type="number" step="0.01" name="cantidad" class="form-control" min="0.1" required></div>
+          </div>
+          <div class="mb-3"><label class="form-label">Observación</label><input name="observacion" class="form-control"></div>
+          <button class="btn btn-success w-100">Registrar Movimiento</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-bold">Existencias Calculadas</div>
+      <div class="card-body table-responsive">
+        <table class="table table-sm">
+          <thead><tr><th>Insumo</th><th>Existencia Actual</th></tr></thead>
+          <tbody>
+            {% for i in insumos %}
+            <tr><td>{{ i.nombre }}</td><td><strong>{{ i.existencia_actual }} {{ i.unidad }}</strong></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-bold">Historial de Movimientos</div>
+      <div class="card-body table-responsive">
+        <table class="table table-sm table-striped">
+          <thead><tr><th>Fecha</th><th>Insumo</th><th>Tipo</th><th>Cantidad</th></tr></thead>
+          <tbody>
+            {% for m in movimientos %}
+            <tr><td>{{ m.fecha }}</td><td>{{ m.insumo.nombre }}</td><td>{{ m.get_tipo_display }}</td><td>{{ m.cantidad }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

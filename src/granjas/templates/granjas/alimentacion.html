@@ -1,0 +1,43 @@
+{% extends 'granjas/base.html' %}
+{% block content %}
+<h3>Registro de Alimentación y Consumo (RF04)</h3>
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">Registrar Consumo</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label class="form-label">Lote *</label>
+            <select name="lote_id" class="form-select" required>
+              {% for l in lotes %}<option value="{{ l.id }}">{{ l.codigo }} - {{ l.granja.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-2"><label class="form-label">Fecha *</label><input type="date" name="fecha" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Tipo de Alimento *</label><input name="tipo_alimento" class="form-control" required></div>
+          <div class="row mb-3">
+            <div class="col-7"><label class="form-label">Cantidad *</label><input type="number" step="0.01" name="cantidad" class="form-control" min="0.1" required></div>
+            <div class="col-5"><label class="form-label">Unidad</label><input name="unidad" class="form-control" value="kg"></div>
+          </div>
+          <button class="btn btn-success w-100">Guardar Consumo</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body table-responsive">
+        <table class="table table-striped">
+          <thead><tr><th>Fecha</th><th>Lote</th><th>Tipo de Alimento</th><th>Cantidad</th></tr></thead>
+          <tbody>
+            {% for r in registros %}
+            <tr><td>{{ r.fecha }}</td><td>{{ r.lote.codigo }}</td><td>{{ r.tipo_alimento }}</td><td>{{ r.cantidad }} {{ r.unidad }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

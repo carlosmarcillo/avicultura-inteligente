@@ -1,0 +1,59 @@
+{% extends 'granjas/base.html' %}
+{% block content %}
+<h3>Registro de Gastos e Ingresos (RF06)</h3>
+<div class="alert alert-info d-flex justify-content-around fw-bold">
+  <span>Ingresos: ${{ ingresos }}</span>
+  <span>Gastos: ${{ gastos }}</span>
+  <span>Balance Neto: ${{ balance }}</span>
+</div>
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">Nuevo Movimiento</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label class="form-label">Tipo *</label>
+            <select name="tipo" class="form-select">
+              <option value="INGRESO">Ingreso</option>
+              <option value="GASTO">Gasto</option>
+            </select>
+          </div>
+          <div class="mb-2"><label class="form-label">Fecha *</label><input type="date" name="fecha" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Concepto *</label><input name="concepto" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Valor (COP) *</label><input type="number" name="valor" class="form-control" min="1" required></div>
+          <div class="mb-3">
+            <label class="form-label">Granja (opcional)</label>
+            <select name="granja_id" class="form-select">
+              <option value="">-- General --</option>
+              {% for g in granjas %}<option value="{{ g.id }}">{{ g.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <button class="btn btn-success w-100">Guardar Movimiento</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body table-responsive">
+        <table class="table table-striped">
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Granja</th><th>Valor</th></tr></thead>
+          <tbody>
+            {% for m in movimientos %}
+            <tr>
+              <td>{{ m.fecha }}</td>
+              <td><span class="badge {% if m.tipo == 'INGRESO' %}bg-success{% else %}bg-danger{% endif %}">{{ m.get_tipo_display }}</span></td>
+              <td>{{ m.concepto }}</td>
+              <td>{{ m.granja.nombre|default:"General" }}</td>
+              <td>${{ m.valor }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'granjas/base.html' %}
+{% block content %}
+<h3>Gestión de Granjas y Lotes (RF02)</h3>
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">Registrar Granja</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="crear_granja">
+          <div class="mb-2"><label class="form-label">Nombre de la Granja *</label><input name="nombre" class="form-control" required></div>
+          <div class="mb-3"><label class="form-label">Ubicación *</label><input name="ubicacion" class="form-control" value="Villa Gorgona, Candelaria" required></div>
+          <button class="btn btn-success">Guardar Granja</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">Registrar Lote en Granja</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="crear_lote">
+          <div class="mb-2">
+            <label class="form-label">Granja *</label>
+            <select name="granja_id" class="form-select" required>
+              {% for g in granjas %}<option value="{{ g.id }}">{{ g.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-2"><label class="form-label">Código Lote *</label><input name="codigo" class="form-control" placeholder="LOTE-03" required></div>
+            <div class="col-6 mb-2">
+              <label class="form-label">Tipo *</label>
+              <select name="tipo_produccion" class="form-select">
+                <option value="PONEDORAS">Aves Ponedoras</option>
+                <option value="ENGORDE">Pollo de Engorde</option>
+                <option value="LEVANTE">Levante</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3"><label class="form-label">Cantidad Aves *</label><input type="number" name="cantidad_aves" class="form-control" min="1" required></div>
+            <div class="col-6 mb-3"><label class="form-label">Fecha Inicio *</label><input type="date" name="fecha_inicio" class="form-control" required></div>
+          </div>
+          <button class="btn btn-primary">Guardar Lote</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header bg-white fw-bold">Granjas y Lotes Asociados</div>
+  <div class="card-body table-responsive">
+    <table class="table table-bordered">
+      <thead><tr><th>Granja</th><th>Ubicación</th><th>Lotes Activos</th></tr></thead>
+      <tbody>
+        {% for g in granjas %}
+        <tr>
+          <td><strong>{{ g.nombre }}</strong></td>
+          <td>{{ g.ubicacion }}</td>
+          <td>
+            {% for l in g.lotes.all %}
+              <span class="badge bg-secondary">{{ l.codigo }} ({{ l.get_tipo_produccion_display }} - {{ l.cantidad_aves }} aves)</span>
+            {% empty %}Sin lotes{% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

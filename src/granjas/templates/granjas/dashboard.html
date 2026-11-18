@@ -1,0 +1,75 @@
+{% extends 'granjas/base.html' %}
+{% block content %}
+<h3 class="mb-3">Panel Principal de Gestión Avícola</h3>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card border-success shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted">Granjas Registradas</h6>
+        <h2 class="text-success">{{ total_granjas }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-primary shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted">Lotes Activos</h6>
+        <h2 class="text-primary">{{ total_lotes }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-warning shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted">Producción Acumulada</h6>
+        <h2 class="text-warning">{{ total_prod }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card border-dark shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted">Balance Financiero</h6>
+        <h2>${{ balance }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-bold">Últimos Registros de Producción</div>
+      <div class="card-body table-responsive">
+        <table class="table table-sm table-striped">
+          <thead><tr><th>Fecha</th><th>Lote</th><th>Cantidad</th></tr></thead>
+          <tbody>
+            {% for p in ultimas_prod %}
+            <tr><td>{{ p.fecha }}</td><td>{{ p.lote.codigo }}</td><td>{{ p.cantidad }}</td></tr>
+            {% empty %}
+            <tr><td colspan="3">Sin registros aún.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-bold">Estado Actual de Inventarios</div>
+      <div class="card-body table-responsive">
+        <table class="table table-sm table-striped">
+          <thead><tr><th>Insumo</th><th>Categoría</th><th>Existencia</th></tr></thead>
+          <tbody>
+            {% for i in insumos %}
+            <tr><td>{{ i.nombre }}</td><td>{{ i.get_categoria_display }}</td><td><strong>{{ i.existencia_actual }} {{ i.unidad }}</strong></td></tr>
+            {% empty %}
+            <tr><td colspan="3">Sin insumos registrados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
